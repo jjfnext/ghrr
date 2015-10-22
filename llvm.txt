@@ -1,0 +1,12 @@
+10/22/15
+tar xvf llvm xz
+tar xvf cfe xz
+mv cfe to llvm tools/clang: change name to clang
+create llvm_build
+win: run in cmd window
+llvm_build>cmake -G "Visual Studio 12 2013 Win64" ..\llvm-3.7.0.src
+
+generate LLVM.sln with 320 projects
+build in vs13
+x64, debug build
+
