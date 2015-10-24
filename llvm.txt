@@ -11,3 +11,6 @@ build in vs13
 x64, debug build
 
 169 succeeded, 1 failed, libclang out of memory
+clang out of memory
+all others good
+
