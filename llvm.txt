@@ -1,3 +1,8 @@
+10/24/15
+mac unix -g build good, v3.6, v3.7
+get started doc:
+http://llvm.org/docs/GettingStarted.html
+
 10/22/15
 tar xvf llvm xz
 tar xvf cfe xz
