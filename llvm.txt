@@ -1,9 +1,37 @@
+10/25/15
+fib(n=8) return 21
+worked both xcode, vs,
+fix ee by 
+    /*
+  ExecutionEngine *EE =
+    EngineBuilder(std::move(Owner))
+    .setErrorStr(&errStr)
+    .setEngineKind(EngineKind::JIT)
+    .create();
+     */
+    ExecutionEngine *EE =
+    EngineBuilder(std::move(Owner)).create();
+
+
 10/24/15
+github backend tutorial:
+https://github.com/Jonathan2251/lbd
+
+
 mac unix -g build good, v3.6, v3.7
 get started doc:
 http://llvm.org/docs/GettingStarted.html
 clang:
 http://clang.llvm.org/get_started.html
+
+cmake -G <generator> [options] <path to llvm sources>
+
+-DCMAKE_INSTALL_PREFIX=directory
+-DCMAKE_BUILD_TYPE=type — Valid options for type are Debug, Release, RelWithDebInfo, and MinSizeRel. Default is Debug.
+-DLLVM_ENABLE_ASSERTIONS=On — Compile with assertion checks enabled (default is Yes for Debug builds, No for all other build types).
+
+llvm cmake:
+http://llvm.org/docs/CMake.html
 
 10/22/15
 tar xvf llvm xz
