@@ -2,7 +2,22 @@
 #include <string>
 #include <sqlite3.h>
 
+#include <boost/lexical_cast.hpp>
+
 using namespace std;
+
+void test_boost()
+{
+    string str = "12345";
+    int i;
+    try {   
+        i = boost::lexical_cast<int>(str);
+        cout << "Value: " << i << endl;
+    } catch( const boost::bad_lexical_cast & ) {
+        //unable to convert
+        cerr << "Error: failed to convert";
+    }
+}
 
 int callback(void *NotUsed, int argc, char **argv, char **azColName) 
 {    
@@ -19,6 +34,8 @@ int callback(void *NotUsed, int argc, char **argv, char **azColName)
 
 int main()
 {
+    test_boost();
+        
 	const char* db_name = "../test/car.db";
 	sqlite3 *db;
 	char *err_msg = 0;
