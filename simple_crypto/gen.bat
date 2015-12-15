@@ -1,0 +1,1 @@
+cmake -G "Visual Studio 12 2013 Win64" -DCRYPTOPP_INCLUDE_DIR=C:\lxu\sdev\bsd_prj\new\prj\install\include\cryptopp -DCRYPTOPP_LIBRARY_DIR=C:\lxu\sdev\bsd_prj\new\prj\install\lib ../src
