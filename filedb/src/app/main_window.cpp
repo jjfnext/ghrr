@@ -20,7 +20,9 @@ MainWindow::MainWindow(QMainWindow* parent)
 {
     ui->setupUi(this);
     connect(ui->quitButton, SIGNAL(clicked()), this, SLOT(doQuit()));
-    connect(ui->genAddDBButton, SIGNAL(clicked()), this, SLOT(doGenAddDB()));
+    connect(ui->emptyDBButton, SIGNAL(clicked()), this, SLOT(doEmptyDB()));
+    connect(ui->displayDBButton, SIGNAL(clicked()), this, SLOT(doDisplayDB()));
+    connect(ui->addUpdateDBButton, SIGNAL(clicked()), this, SLOT(doAddUpdateDB()));
     connect(ui->clearDirPathButton, SIGNAL(clicked()), this, SLOT(doClearDirPath()));
     connect(ui->clearDBPathButton, SIGNAL(clicked()), this, SLOT(doClearDBPath()));
     connect(ui->clearOutputButton, SIGNAL(clicked()), this, SLOT(doClearOutput()));
@@ -31,21 +33,6 @@ void MainWindow::doQuit()
 {
     close();
 }
-
-/*
-void MainWindow::doListFile()
-{
-    QString path_txt = ui->pathEdit->text();
-    try {
-        DirMgr dirmgr(path_txt.toStdString());
-        printString(QString::fromStdString(dirmgr.getFileList()));
-    } catch (const invalid_argument& ex) {
-        // bad argument
-    } catch (const fs::filesystem_error& ex) {
-
-    }
-}
-*/
 
 void MainWindow::printString(QString txt)
 {
@@ -60,14 +47,14 @@ void MainWindow::doClearAll()
     doClearOutput();
 }
 
-void MainWindow::doGenAddDB()
+void MainWindow::doAddUpdateDB()
 {
-    QString dirpath = ui->dirPathEdit->text();
+    QString dirpath = ui->dirPathEdit->text().trimmed();
     if (dirpath.isEmpty()) {
         return;
     }
 
-    QString dbpath = ui->dbPathEdit->text();
+    QString dbpath = ui->dbPathEdit->text().trimmed();
     if (dbpath.isEmpty()) {
         return;
     }
@@ -95,5 +82,41 @@ void MainWindow::doClearDBPath()
 void MainWindow::doClearOutput()
 {
     ui->outputEdit->clear();
+}
+
+void MainWindow::doEmptyDB()
+{
+    QString dbpath = ui->dbPathEdit->text().trimmed();
+    if (dbpath.isEmpty()) {
+        return;
+    }
+
+    try {
+        DirMgr dirmgr(dbpath);
+        dirmgr.emptyDB();
+        printString(dirmgr.toString());
+    }
+    catch (const runtime_error& ex) {
+        // catch all handled error:
+        printString("Error:" + QString(ex.what()));
+    }
+}
+
+void MainWindow::doDisplayDB()
+{
+    QString dbpath = ui->dbPathEdit->text().trimmed();
+    if (dbpath.isEmpty()) {
+        return;
+    }
+
+    try {
+        DirMgr dirmgr(dbpath);
+        printString(dirmgr.displayDB());
+        printString(dirmgr.toString());
+    }
+    catch (const runtime_error& ex) {
+        // catch all handled error:
+        printString("Error:" + QString(ex.what()));
+    }
 }
 

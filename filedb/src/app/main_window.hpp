@@ -19,7 +19,9 @@ public:
 
 private slots:
     void doQuit();
-    void doGenAddDB();
+    void doEmptyDB();
+    void doDisplayDB();
+    void doAddUpdateDB();
     void doClearDirPath();
     void doClearDBPath();
     void doClearOutput();

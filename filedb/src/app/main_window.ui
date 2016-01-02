@@ -105,9 +105,37 @@
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="genAddDBButton">
+        <widget class="QPushButton" name="emptyDBButton">
          <property name="text">
-          <string>Gen/Add DB</string>
+          <string>Empty DB</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="Line" name="line_3">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="displayDBButton">
+         <property name="text">
+          <string>Display DB</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="Line" name="line_4">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="addUpdateDBButton">
+         <property name="text">
+          <string>Add/Update DB</string>
          </property>
         </widget>
        </item>
@@ -117,6 +145,19 @@
           <enum>Qt::Horizontal</enum>
          </property>
         </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
        </item>
        <item>
         <widget class="QPushButton" name="clearDirPathButton">
@@ -157,7 +198,7 @@
          <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
-           <height>400</height>
+           <height>200</height>
           </size>
          </property>
         </spacer>
