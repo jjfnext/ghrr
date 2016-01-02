@@ -1,0 +1,54 @@
+1/2/15
+
+
+v1 working:
+
+test input:
+dir path: 
+C:\lxu\sdev\bsd_prj\new\prj\filedb\b3
+db path: 
+C:\lxu\sdev\bsd_prj\new\prj\filedb\b3\mydb.db
+
+recursive boost iterator:
+for loop not good due to symlink, need to disable walk,
+so:
+http://stackoverflow.com/questions/18233640/boostfilesystemrecursive-directory-iterator-with-filter
+void selective_search( const path &search_here, const std::string &exclude_this_directory)
+{
+    using namespace boost::filesystem;
+    recursive_directory_iterator dir( search_here), end;
+    while (dir != end)
+    {
+        // make sure we don't recurse into certain directories
+        // note: maybe check for is_directory() here as well...
+        if (dir->path().filename() == exclude_this_directory)
+        {
+            dir.no_push(); // don't recurse into this directory.
+        }
+
+        // do other stuff here.            
+
+        ++dir;
+    }
+ }
+
+iterator value type is directory_entry, can call path() to use fs to test symlink, reg file etc
+
+1/1/15
+check table exists:
+http://stackoverflow.com/questions/1601151/how-do-i-check-in-sqlite-whether-a-table-exists
+
+SELECT name FROM sqlite_master WHERE type='table' AND name='table_name';
+
+create table if not exists TableName (col1 typ1, ..., colN typN)
+
+drop table if exists TableName
+
+12/31/15
+get all together
+
+*qt debug msg set handler
+*db schema
+*ui
+
+file info:
