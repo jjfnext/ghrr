@@ -19,7 +19,30 @@ using namespace std;
 namespace fs = boost::filesystem;
 
 namespace app {
-    DirMgr::DirMgr(QString& dirpath, QString& dbpath)
+    class DirMgr::impl {
+    public:
+        impl(QString& dirpath, QString& dbpath);
+        impl(QString& dbpath);
+        const QString toString();
+        void emptyDB();
+        QString displayDB();
+
+    private:
+        void checkDirPath(const QString& dirpath);
+        void checkDBPath(const QString& dbpath);
+        void genDBTable();
+        void genDBFile();
+        void genSingleDBFile(const boost::filesystem::path& path);
+        void genDirectoryDBFiles(const boost::filesystem::path& path);
+        void insertDBFile(string fchecksum, string fname, string fpath, int fsize, string fmodtime, string fname_norm, string fext);
+        bool checkDBFileDuplicate(sqlite3pp::database& db, string fchecksum);
+
+    private:
+        string fDirPath;
+        string fDBPath;
+    };
+
+    DirMgr::impl::impl(QString& dirpath, QString& dbpath)
     {
         // check dirpath exist
         // check dbpath directory exist
@@ -32,12 +55,12 @@ namespace app {
         genDBFile();
     }
 
-    DirMgr::DirMgr(QString& dbpath)
+    DirMgr::impl::impl(QString& dbpath)
     {
         checkDBPath(dbpath);
     }
 
-    void DirMgr::checkDirPath(const QString& dirpath)
+    void DirMgr::impl::checkDirPath(const QString& dirpath)
     {
         // actually, allow both dir and file
         
@@ -50,7 +73,7 @@ namespace app {
         fDirPath = dirpath.toStdString();
     }
 
-    void DirMgr::checkDBPath(const QString& dbpath)
+    void DirMgr::impl::checkDBPath(const QString& dbpath)
     {
         string path = dbpath.toStdString();
         fs::path p(path);
@@ -62,7 +85,7 @@ namespace app {
         fDBPath = dbpath.toStdString();
     }
 
-    const QString DirMgr::toString()
+    const QString DirMgr::impl::toString()
     {
         boost::format f("Gen file db: \n\tdir path: %1$s\n\tdb path: %2$s\n");
         f % fDirPath % fDBPath;
@@ -72,7 +95,7 @@ namespace app {
         return result;
     }
 
-    void DirMgr::genDBTable()
+    void DirMgr::impl::genDBTable()
     {
         sqlite3pp::database db(fDBPath.c_str());
 
@@ -98,7 +121,7 @@ namespace app {
         }
     }
 
-    bool DirMgr::checkDBFileDuplicate(sqlite3pp::database& db, string fchecksum)
+    bool DirMgr::impl::checkDBFileDuplicate(sqlite3pp::database& db, string fchecksum)
     {
         boost::format f("select count(*) from FileTable where FileCheckSum = '%1$s'; ");
         f % fchecksum ; 
@@ -118,7 +141,7 @@ namespace app {
         return false;
     }
 
-    void DirMgr::insertDBFile(string fchecksum, string fname, string fpath, int fsize, string fmodtime, string fname_norm, string fext)
+    void DirMgr::impl::insertDBFile(string fchecksum, string fname, string fpath, int fsize, string fmodtime, string fname_norm, string fext)
     {
         sqlite3pp::database db(fDBPath.c_str());
         if (checkDBFileDuplicate(db, fchecksum)) { // todo: if duplicate, do update instead of insert
@@ -144,7 +167,7 @@ namespace app {
         }
     }
 
-    void DirMgr::genSingleDBFile(const fs::path& path)
+    void DirMgr::impl::genSingleDBFile(const fs::path& path)
     {
         qDebug() << "db file: " << QString::fromStdString(path.string());
 
@@ -175,7 +198,7 @@ namespace app {
         insertDBFile(fchecksum, fname, fullpath, fsize, string(fmod_txt), fname_norm, fext);
     }
 
-    void DirMgr::genDirectoryDBFiles(const fs::path& dir_path)
+    void DirMgr::impl::genDirectoryDBFiles(const fs::path& dir_path)
     {
         fs::recursive_directory_iterator it(dir_path), end;
         while (it != end) {
@@ -190,7 +213,7 @@ namespace app {
         }
     }
 
-    void DirMgr::genDBFile()
+    void DirMgr::impl::genDBFile()
     {
         fs::path p(fDirPath);
         if (fs::is_regular_file(p)) {
@@ -204,7 +227,7 @@ namespace app {
         throw runtime_error("Error: " + fDirPath + " is not file or directory");
     }
 
-    void DirMgr::emptyDB()
+    void DirMgr::impl::emptyDB()
     {
         sqlite3pp::database db(fDBPath.c_str());
 
@@ -216,7 +239,7 @@ namespace app {
         }
     }
 
-    QString DirMgr::displayDB()
+    QString DirMgr::impl::displayDB()
     {
         sqlite3pp::database db(fDBPath.c_str());
         sqlite3pp::query qry(db, "select * from FileTable;");
@@ -243,5 +266,34 @@ namespace app {
         db.disconnect();
 
         return result_list.join("");
+    }
+
+    DirMgr::DirMgr(QString& dirpath, QString& dbpath) :
+        pimpl(new DirMgr::impl(dirpath, dbpath))
+    {
+    }
+
+    DirMgr::DirMgr(QString& dbpath) :
+        pimpl(new DirMgr::impl(dbpath))
+    {
+    }
+
+    const QString DirMgr::toString()
+    {
+        return pimpl->toString();
+    }
+
+    void DirMgr::emptyDB()
+    {
+        pimpl->emptyDB();
+    }
+
+    QString DirMgr::displayDB()
+    {
+        return pimpl->displayDB();
+    }
+
+    DirMgr::~DirMgr()
+    {
     }
 }
