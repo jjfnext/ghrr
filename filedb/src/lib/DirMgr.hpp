@@ -28,7 +28,7 @@ namespace app {
         void genDBFile();
         void genSingleDBFile(const boost::filesystem::path& path);
         void genDirectoryDBFiles(const boost::filesystem::path& path);
-        void insertDBFile(string fchecksum, string fname, string fpath, int fsize, string fmodtime);
+        void insertDBFile(string fchecksum, string fname, string fpath, int fsize, string fmodtime, string fname_norm, string fext);
         bool checkDBFileDuplicate(sqlite3pp::database& db, string fchecksum);
 
     private:

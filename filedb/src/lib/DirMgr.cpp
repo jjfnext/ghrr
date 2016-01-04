@@ -4,6 +4,7 @@
 #include <ctime>
 #include <iostream>
 #include <string>
+#include <algorithm>
 
 #include <boost/format.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -81,7 +82,9 @@ namespace app {
             "FilePath text, "
             "FizeSize integer, "
             "FileModTime text, "
-            "Idx integer);";
+            "Idx integer, "
+            "FileNameNorm text, "
+            "FileExt text);";
         int ret = db.execute(cmd.c_str());
 
         /*
@@ -115,7 +118,7 @@ namespace app {
         return false;
     }
 
-    void DirMgr::insertDBFile(string fchecksum, string fname, string fpath, int fsize, string fmodtime)
+    void DirMgr::insertDBFile(string fchecksum, string fname, string fpath, int fsize, string fmodtime, string fname_norm, string fext)
     {
         sqlite3pp::database db(fDBPath.c_str());
         if (checkDBFileDuplicate(db, fchecksum)) { // todo: if duplicate, do update instead of insert
@@ -128,8 +131,8 @@ namespace app {
         boost::tie(count) = (*i).get_columns<int>(0);
         qDebug() << "db count: " << count;
 
-        boost::format f("insert into FileTable values('%1$s', '%2$s', '%3$s', %4$d, '%5$s', %6$d); ");
-        f % fchecksum % fname % fpath % fsize % fmodtime % (count + 1); // idx start at 1
+        boost::format f("insert into FileTable values('%1$s', '%2$s', '%3$s', %4$d, '%5$s', %6$d, '%7$s', '%8$s'); ");
+        f % fchecksum % fname % fpath % fsize % fmodtime % (count + 1) % fname_norm % fext; // idx start at 1
         string cmd = f.str();
         qDebug() << "insert cmd: " << QString::fromStdString(cmd);
 
@@ -155,6 +158,9 @@ namespace app {
 
         string fullpath = p.string();
         string fname = p.filename().string();
+        string fname_norm = fname;
+        transform(fname_norm.begin(), fname_norm.end(), fname_norm.begin(), tolower);
+        string fext = p.has_extension() ? p.extension().string().substr(1) : "noext";
         int fsize = static_cast<int>(fs::file_size(p));
         time_t ts = fs::last_write_time(p);
         tm fmod_time = *localtime(&ts);
@@ -166,7 +172,7 @@ namespace app {
 
         string fchecksum = gen_string_checksum(fullpath);
 
-        insertDBFile(fchecksum, fname, fullpath, fsize, string(fmod_txt));
+        insertDBFile(fchecksum, fname, fullpath, fsize, string(fmod_txt), fname_norm, fext);
     }
 
     void DirMgr::genDirectoryDBFiles(const fs::path& dir_path)
@@ -222,13 +228,15 @@ namespace app {
             char const* fpath;
             int fsize;
             char const* fmodtime;
+            char const* fname_norm;
+            char const* fext;
             int idx;
 
-            boost::tie(fchecksum, fname, fpath, fsize, fmodtime, idx) = 
-                (*i).get_columns<char const*, char const*, char const*, int, char const*, int>(0, 1, 2, 3, 4, 5);
+            boost::tie(fchecksum, fname, fpath, fsize, fmodtime, idx, fname_norm, fext) = 
+                (*i).get_columns<char const*, char const*, char const*, int, char const*, int, char const*, char const*>(0, 1, 2, 3, 4, 5, 6, 7);
 
-            boost::format f("File:\n\tIdx: %1$d\n\tName: %2$s\n\tSize: %3$d\n\tMod: %4$s\n\tPath: %5$s\n\tCheckSum: %6$s\n");
-            f % idx % fname % fsize % fmodtime % fpath % fchecksum; 
+            boost::format f("File:\n\tIdx: %1$d\n\tName: %2$s\n\tSize: %3$d\n\tMod: %4$s\n\tPath: %5$s\n\tCheckSum: %6$s\n\tNameNorm: %7$s\n\tExt: %8$s\n");
+            f % idx % fname % fsize % fmodtime % fpath % fchecksum % fname_norm % fext; 
             result_list << QString::fromStdString(f.str());
         }
 
