@@ -29,6 +29,9 @@ private slots:
 
 private:
     void printString(QString txt);
+    void printStart();
+    void printEnd();
+    void printStringTop(QString txt);
 
 private:
     Ui::MainWindow* ui;

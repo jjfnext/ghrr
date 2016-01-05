@@ -21,6 +21,9 @@ namespace app {
         void emptyDB();
         QString displayDB();
 
+    public:
+        static QString timeNow();
+
     private:
         class impl;
         unique_ptr<impl> pimpl;

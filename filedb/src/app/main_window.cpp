@@ -36,6 +36,12 @@ void MainWindow::doQuit()
 
 void MainWindow::printString(QString txt)
 {
+    QString full_txt = ui->outputEdit->toPlainText() + txt + "\n";
+    ui->outputEdit->setText(full_txt);
+}
+
+void MainWindow::printStringTop(QString txt)
+{
     QString full_txt = txt + "\n" + ui->outputEdit->toPlainText();
     ui->outputEdit->setText(full_txt);
 }
@@ -59,6 +65,7 @@ void MainWindow::doAddUpdateDB()
         return;
     }
 
+    printStart();
     try {
         DirMgr dirmgr(dirpath, dbpath);
         printString(dirmgr.toString());
@@ -67,6 +74,7 @@ void MainWindow::doAddUpdateDB()
         // catch all handled error:
         printString("Error:" + QString(ex.what()));
     }
+    printEnd();
 }
 
 void MainWindow::doClearDirPath()
@@ -84,6 +92,16 @@ void MainWindow::doClearOutput()
     ui->outputEdit->clear();
 }
 
+void MainWindow::printStart()
+{
+    printString("-----Start: " + DirMgr::timeNow());
+}
+
+void MainWindow::printEnd()
+{
+    printString("-----End: " + DirMgr::timeNow());
+}
+
 void MainWindow::doEmptyDB()
 {
     QString dbpath = ui->dbPathEdit->text().trimmed();
@@ -91,6 +109,7 @@ void MainWindow::doEmptyDB()
         return;
     }
 
+    printStart();
     try {
         DirMgr dirmgr(dbpath);
         dirmgr.emptyDB();
@@ -100,6 +119,7 @@ void MainWindow::doEmptyDB()
         // catch all handled error:
         printString("Error:" + QString(ex.what()));
     }
+    printEnd();
 }
 
 void MainWindow::doDisplayDB()
@@ -109,6 +129,7 @@ void MainWindow::doDisplayDB()
         return;
     }
 
+    printStart();
     try {
         DirMgr dirmgr(dbpath);
         printString(dirmgr.displayDB());
@@ -118,5 +139,6 @@ void MainWindow::doDisplayDB()
         // catch all handled error:
         printString("Error:" + QString(ex.what()));
     }
+    printEnd();
 }
 
