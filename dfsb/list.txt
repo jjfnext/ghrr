@@ -1,0 +1,44 @@
+12/29/15
+error handling: create an error dialog tool and show error in view
+diff mgr throw exception with error msg
+
+done diff tool, qprocess worked well, googled to set cmake include for lib
+include_directories(. ${Boost_INCLUDE_DIR} ${Qt5Core_INCLUDE_DIRS})
+
+
+12/28/15
+
+diff tool
+
+*give two path and diff output, can be file and dir, just do path
+*input: path1, path2
+*output: command to run
+*button: Do diff, exit, clear
+
+simple version of diff, try out boost process
+
+-----
+diff sb
+*sb1, sb2
+*set sb1 and sb2 button
+*list box for sb
+*add to sb list
+*path list box
+*add to path list
+*add to path list button
+*do diff button
+*clear button, clear sb, clear path, clear output, clear all
+*quit button
+*output area, can be used for copy paste
+
+list manipulation
+
+
+use qt process:
+    QProcess*   process = new QProcess();
+          QString program = "c:\\windows\\system32\\calc.exe";
+              process->start(program);
+
+process_ptr = new QProcess(this);  //process_ptr is declared in my header file QProcess *process_ptr;
+connect(process_ptr,SIGNAL(started()),this,SLOT(OnStarted()));
+process_ptr->start(programName, arguments);
